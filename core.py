@@ -3,7 +3,7 @@ import re
 import json
 import requests
 import numpy as np
-from PIL import Image
+from PIL import Image, UnidentifiedImageError
 import pytesseract
 import io, base64
 from dotenv import load_dotenv
@@ -46,14 +46,18 @@ def query_search(query: str):
     return discourse_context, course_context
 
 
-def extract_text_from_base64(img_b64: str) -> str:
-    if "," in img_b64:
-        base64_data = img_b64.split(",", 1)[1]
-    else:
-        base64_data = img_b64
-    data = base64.b64decode(base64_data)
-    img = Image.open(io.BytesIO(data))
-    return pytesseract.image_to_string(img)
+def extract_text_from_base64(img_b64: str) -> str | None:
+    try:
+        if "," in img_b64:
+            base64_data = img_b64.split(",", 1)[1]
+        else:
+            base64_data = img_b64
+
+        data = base64.b64decode(base64_data)
+        img = Image.open(io.BytesIO(data))
+        return pytesseract.image_to_string(img)
+    except (base64.binascii.Error, UnidentifiedImageError, OSError, ValueError) as e:
+        return ""
 
 
 def create_llm_prompt(query: str, topic_context: str, course_context: str, base64_image: Optional[str] = None) -> str:
@@ -62,6 +66,8 @@ def create_llm_prompt(query: str, topic_context: str, course_context: str, base6
         base64_image_text = extract_text_from_base64(base64_image)
         if base64_image_text.strip():
             image_section = f"\n\nThe student also provided an image with the following text:\n{base64_image_text}"
+        elif base64_image_text == "":
+            image_section = ""
         else:
             image_section = "\n\nThe student provided an image, but no text could be extracted."
 
