@@ -1,8 +1,9 @@
 # Virtual environment
 venv/
 
-# extra
+# Additional
 extra/
+raw-data/
 
 # Python cache files
 __pycache__/
