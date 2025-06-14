@@ -15,3 +15,6 @@ __pycache__/
 *.egg-info/
 .env
 .DS_Store
+
+k.md
+ok.md

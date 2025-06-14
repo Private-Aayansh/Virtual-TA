@@ -1,6 +1,6 @@
 import numpy as np
 from typing import List, Dict
-from utils import load_index_and_metadata
+from api.utils import load_index_and_metadata
 
 def get_topic_replies(topic_id: str, metadata: List[Dict], matched_post_number: int, max_replies: int = 17) -> List[Dict]:
     topic_chunks = [item for item in metadata if item['metadata']['topic_id'] == topic_id]

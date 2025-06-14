@@ -1,7 +1,7 @@
 from typing import List, Optional
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from core import query_search, generate_response, create_llm_prompt
+from api.core import query_search, generate_response, create_llm_prompt
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
