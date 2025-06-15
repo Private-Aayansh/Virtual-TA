@@ -1,11 +1,8 @@
-import os
-import re
-import json
-import requests
-import numpy as np
+import os, re, json, base64, io, asyncio, logging, time, requests
 from PIL import Image, UnidentifiedImageError
+import numpy as np
 import pytesseract
-import io, base64
+import httpx
 from dotenv import load_dotenv
 from discourse import discourse_query_search
 from course import course_query_search
@@ -16,34 +13,34 @@ load_dotenv()
 AIPROXY_API_KEY = os.getenv("AIPROXY_API_KEY")
 TOGETHER_AI_API_KEY = os.getenv("TOGETHER_AI_API_KEY")
 
+# reuse clients globally
+_EMB_CLIENT = httpx.AsyncClient(http2=True)
 
-def get_together_embedding(text: str):
-    API_URL = "https://api.together.xyz/v1/embeddings"
-    headers = {
-        "Authorization": f"Bearer {TOGETHER_AI_API_KEY}",
-        "Content-Type": "application/json"
-    }
+async def get_together_embedding(text: str) -> np.ndarray:
+    start = time.perf_counter()
+    resp = await _EMB_CLIENT.post(
+        "https://api.together.xyz/v1/embeddings",
+        headers={"Authorization": f"Bearer {TOGETHER_AI_API_KEY}", "Content-Type": "application/json"},
+        json={"model": "intfloat/multilingual-e5-large-instruct", "input": text}
+    )
+    resp.raise_for_status()
+    emb = np.array(resp.json()["data"][0]["embedding"], dtype=np.float32)
+    elapsed = (time.perf_counter() - start)*1000
+    logging.info(f"Embedding call took {elapsed:.1f}ms")
+    return emb
 
-    payload = {
-        "model": "intfloat/multilingual-e5-large-instruct",
-        "input": text
-    }
-
-    response = requests.post(API_URL, headers=headers, json=payload)
-    response.raise_for_status()
-    output = response.json()
-
-    return np.array(output["data"][0]["embedding"], dtype=np.float32)
-
-
-def query_search(query: str):
-    embedding = get_together_embedding(query)
-    discourse_results = discourse_query_search(embedding, "./data/discourse_index.faiss", "./data/discourse_metadata.json")
-    course_results = course_query_search(embedding, "./data/course_index.faiss", "./data/course_metadata.json")
-    discourse_context = "\n\n".join([f"{r['text']}\nURL: {r['metadata']['url']}" for r in discourse_results])
-    course_context = "\n\n".join([f"{r['text']}\nURL: {r['metadata']['url']}" for r in course_results])
-
-    return discourse_context, course_context
+async def query_search(query: str, COURSE_INDEX, COURSE_METADATA, DISCOURSE_INDEX, DISCOURSE_METADATA):
+    emb = await get_together_embedding(query)
+    # parallel CPU-bound searches
+    start = time.perf_counter()
+    d_task = asyncio.to_thread(discourse_query_search, emb, DISCOURSE_INDEX, DISCOURSE_METADATA)
+    c_task = asyncio.to_thread(course_query_search,   emb, COURSE_INDEX,   COURSE_METADATA)
+    d_res, c_res = await asyncio.gather(d_task, c_task)
+    elapsed = (time.perf_counter() - start)*1000
+    logging.info(f"FAISS searches took {elapsed:.1f}ms")
+    disc_ctx = "\n\n".join(f"{r['text']}\nURL: {r['metadata']['url']}" for r in d_res)
+    course_ctx = "\n\n".join(f"{r['text']}\nURL: {r['metadata']['url']}" for r in c_res)
+    return disc_ctx, course_ctx
 
 
 def extract_text_from_base64(img_b64: str) -> str | None:

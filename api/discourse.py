@@ -1,6 +1,5 @@
 import numpy as np
 from typing import List, Dict
-from api.utils import load_index_and_metadata
 
 def get_topic_replies(topic_id: str, metadata: List[Dict], matched_post_number: int, max_replies: int = 17) -> List[Dict]:
     topic_chunks = [item for item in metadata if item['metadata']['topic_id'] == topic_id]
@@ -19,8 +18,7 @@ def get_topic_replies(topic_id: str, metadata: List[Dict], matched_post_number: 
     return question_chunks + reply_chunks[:max_replies]
 
 
-def discourse_query_search(embedding, index_path: str, metadata_path: str, k: int = 3, max_replies: int = 17) -> List[Dict]:
-    index, metadata = load_index_and_metadata(index_path, metadata_path)
+def discourse_query_search(embedding, index, metadata, k: int = 3, max_replies: int = 17) -> List[Dict]:
     embedding = np.array(embedding, dtype=np.float32)
     if embedding.ndim == 1:
         embedding = embedding.reshape(1, -1)

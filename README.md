@@ -38,3 +38,9 @@ venv\\Scripts\\activate
 pip install -r requirements.txt
 ```
 
+### 5. Start the server
+```bash
+cd api
+uvicorn main:app --reload --host 0.0.0.0 --port 6969
+```
+

@@ -1,8 +1,9 @@
 from typing import List, Optional
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from api.core import query_search, generate_response, create_llm_prompt
+from core import query_search, generate_response, create_llm_prompt
 from fastapi.middleware.cors import CORSMiddleware
+from utils import load_index_and_metadata
 
 app = FastAPI()
 
@@ -13,6 +14,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Preload indices and metadata at startup
+DISCOURSE_INDEX, DISCOURSE_METADATA = load_index_and_metadata("../data/discourse_index.faiss", "../data/discourse_metadata.json")
+COURSE_INDEX, COURSE_METADATA = load_index_and_metadata("../data/course_index.faiss", "../data/course_metadata.json")
 
 class QueryRequest(BaseModel):
     question: str
@@ -28,10 +33,10 @@ class LLMResponse(BaseModel):
 
 
 @app.post("/generate-answer", response_model=LLMResponse)
-def generate_answer(request: QueryRequest):
+async def generate_answer(request: QueryRequest):
     try:
         query = request.question
-        discourse_context, course_context = query_search(query)
+        discourse_context, course_context = await query_search(query, COURSE_INDEX, COURSE_METADATA, DISCOURSE_INDEX, DISCOURSE_METADATA)
         prompt = create_llm_prompt(query, discourse_context, course_context, request.image)
         result = generate_response(prompt)
         return result

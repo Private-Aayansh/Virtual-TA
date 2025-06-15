@@ -1,9 +1,7 @@
 from typing import List, Dict
 import numpy as np
-from utils import load_index_and_metadata
 
-def course_query_search(embedding, index_path: str, metadata_path: str, k: int = 2) -> List[Dict]:
-    index, metadata = load_index_and_metadata(index_path, metadata_path)
+def course_query_search(embedding, index, metadata, k: int = 2) -> List[Dict]:
     embedding = np.array(embedding, dtype=np.float32)
     if embedding.ndim == 1:
         embedding = embedding.reshape(1, -1)
