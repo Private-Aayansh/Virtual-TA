@@ -1,4 +1,4 @@
-import os, re, json, base64, io, asyncio, logging, time, requests
+import os, re, json, base64, io, asyncio, time, requests
 from PIL import Image, UnidentifiedImageError
 import numpy as np
 import pytesseract
@@ -14,11 +14,11 @@ AIPROXY_API_KEY = os.getenv("AIPROXY_API_KEY")
 TOGETHER_AI_API_KEY = os.getenv("TOGETHER_AI_API_KEY")
 
 # reuse clients globally
-_EMB_CLIENT = httpx.AsyncClient(http2=True)
+_LLM_CLIENT = httpx.AsyncClient(http2=True, timeout=30.0)
 
 async def get_together_embedding(text: str) -> np.ndarray:
     start = time.perf_counter()
-    resp = await _EMB_CLIENT.post(
+    resp = await _LLM_CLIENT.post(
         "https://api.together.xyz/v1/embeddings",
         headers={"Authorization": f"Bearer {TOGETHER_AI_API_KEY}", "Content-Type": "application/json"},
         json={"model": "intfloat/multilingual-e5-large-instruct", "input": text}
@@ -26,7 +26,6 @@ async def get_together_embedding(text: str) -> np.ndarray:
     resp.raise_for_status()
     emb = np.array(resp.json()["data"][0]["embedding"], dtype=np.float32)
     elapsed = (time.perf_counter() - start)*1000
-    logging.info(f"Embedding call took {elapsed:.1f}ms")
     return emb
 
 async def query_search(query: str, COURSE_INDEX, COURSE_METADATA, DISCOURSE_INDEX, DISCOURSE_METADATA):
@@ -37,7 +36,6 @@ async def query_search(query: str, COURSE_INDEX, COURSE_METADATA, DISCOURSE_INDE
     c_task = asyncio.to_thread(course_query_search,   emb, COURSE_INDEX,   COURSE_METADATA)
     d_res, c_res = await asyncio.gather(d_task, c_task)
     elapsed = (time.perf_counter() - start)*1000
-    logging.info(f"FAISS searches took {elapsed:.1f}ms")
     disc_ctx = "\n\n".join(f"{r['text']}\nURL: {r['metadata']['url']}" for r in d_res)
     course_ctx = "\n\n".join(f"{r['text']}\nURL: {r['metadata']['url']}" for r in c_res)
     return disc_ctx, course_ctx
@@ -110,10 +108,10 @@ Course Material:
     return prompt
 
 
-def generate_response(prompt):
+async def generate_response(prompt):
     # Send request
-    system_prompt = "You are an assistant answering based only on the provided context. Do not search anything else!"
-    response = requests.post(
+    system_prompt = "You are a Virtual TA of Tools in Data Science (TDS) course. Answer based ONLY on the provided context. Do not search anything else!"
+    response = await _LLM_CLIENT.post(
         "https://aiproxy.sanand.workers.dev/openai/v1/chat/completions",
         headers={
             "Content-Type": "application/json",
