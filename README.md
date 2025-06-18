@@ -1,34 +1,6 @@
 ## **🚀 Setup & Local Development**
 
-## ✅ Prerequisites
-
-1. **Clone the repo**
-   ```bash
-   git clone https://github.com/Private-Aayansh/Virtual-TA.git
-   cd Virtual-TA
-   ```
-
-2. **Create & activate a Python venv**
-   ```bash
-   python -m venv venv
-   # macOS/Linux
-   source venv/bin/activate
-   # Windows (PowerShell)
-   venv\\Scripts\\activate
-   ```
-
-3. **Install dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
----
-
-## Option 1: Quick Start with Pre-processed Data
-
-This option walks you through the pre-processed data and embeddings available.
-
-### **⚙️ Quick Setup**
+## ⚙️ Prerequisites
 
 ### 1. Clone the Repository
 ```bash
@@ -61,6 +33,13 @@ venv\\Scripts\\activate
 ```bash
 pip install -r requirements.txt
 ```
+
+---
+
+## Option 1: Quick Start with Pre-processed Data
+
+This option walks you through the pre-processed data and embeddings available.
+
 
 ### 5. Start the server
 ```bash
