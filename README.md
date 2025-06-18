@@ -221,13 +221,6 @@ Deploy Virtual-TA on AWS EC2 for scalability:
 
 ---
 
-## Usage
-
-With the server running, interact with Virtual-TA via API endpoints. Refer to the API documentation for detailed instructions.
-
-
----
-
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
