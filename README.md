@@ -113,13 +113,8 @@ Deploying your application on AWS EC2 provides full control over the server envi
 
 #### Steps to Deploy on AWS EC2:
 1. **Launch an EC2 Instance**:
-   - Sign in to the [AWS Management Console](https://aws.amazon.com/console/).
-   - Navigate to **EC2** and click **Launch Instance**.
-   - Choose an AMI (e.g., **Ubuntu Server 20.04 LTS**).
-   - Select an instance type (e.g., **t2.micro** for testing).
-   - Configure instance details, add storage, and tags as needed.
-   - Configure security groups to allow inbound traffic on **port 6969** (for the app) and **port 22** (for SSH).
-   - Review and launch the instance, selecting or creating a key pair for SSH access.
+- Ubuntu 22.04 LTS, t3.micro (or bigger if you use larger embeddings)
+- Open ports 22 (SSH) and 6969 (your API)
 
 2. **SSH into the Instance**:
    - Use your key pair to SSH into the instance:
