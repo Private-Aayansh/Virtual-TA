@@ -1,5 +1,3 @@
-## **🚀 Setup & Local Development**
-
 ## ⚙️ Prerequisites
 
 ### 1. Clone the Repository
@@ -36,14 +34,19 @@ pip install -r requirements.txt
 
 ---
 
+## **🚀 Setup & Local Development**
+
 ## Option 1: Quick Start with Pre-processed Data
 
-This option walks you through the pre-processed data and embeddings available.
+This option will let you use pre-processed data and embeddings created by me!
 
-
-### 5. Start the server
+### 1. Change the directory
 ```bash
 cd api
+```
+
+### 2. Start the server
+```bash
 uvicorn main:app --reload --host 0.0.0.0 --port 6969
 ```
 
@@ -51,39 +54,7 @@ uvicorn main:app --reload --host 0.0.0.0 --port 6969
 
 This option walks you through the entire data collection and processing pipeline.
 
-### 1. Clone the Repository
-```bash
-git clone https://github.com/Private-Aayansh/Virtual-TA.git
-```
-
-### 2. Change the working directory
-```bash
-cd Virtual-TA
-```
-
-### 3. Create & Activate Virtual Environment
-- #### Create Virtual Environment
-  
-```bash
-python -m venv venv
-```
-
-- #### Activate Virtual Environment
-For Linux/macOS:
-```
-source venv/bin/activate
-```
-For Windows:
-```
-venv\\Scripts\\activate
-```
-
-### 4. Install Required Package Dependencies
-```bash
-pip install -r requirements.txt
-```
-
-### 5. Data Fetching and Embedding
+### 1. Data Fetching and Embedding
 
 - Fetch the topics first
 ```bash
@@ -125,8 +96,12 @@ python 6_topics_embedding.py
 python 7_content_embedding.py
 ```
 
-### 6. Start the server
+### 2. Change the directory
 ```bash
 cd api
+```
+
+### 3. Start the server
+```bash
 uvicorn main:app --reload --host 0.0.0.0 --port 6969
 ```
