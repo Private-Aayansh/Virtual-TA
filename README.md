@@ -1,4 +1,4 @@
-🤖 **Virtual-TA** 🤖
+# 🤖 **Virtual-TA** 🤖
 
 Virtual-TA is a Retrieval-Augmented Generation (RAG) application designed to assist students and instructors in Tools in Data Science courses by leveraging large language models and vector databases to provide intelligent, context-aware responses.
 
