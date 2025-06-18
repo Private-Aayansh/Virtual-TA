@@ -158,7 +158,6 @@ Deploying your application on AWS EC2 provides full control over the server envi
      ```
 
 7. **Run the Application**:
-   - For production, use a process manager like `systemd`:
      - Create a service file at `/etc/systemd/system/virtual-ta.service`:
        ```ini
         [Unit]
