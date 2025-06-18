@@ -105,3 +105,12 @@ cd api
 ```bash
 uvicorn main:app --reload --host 0.0.0.0 --port 6969
 ```
+
+
+## **🚀 Cloud Deployment**
+## Option 1: AWS EC2 (Preferred)
+
+
+## Option 2: Vercel
+
+
