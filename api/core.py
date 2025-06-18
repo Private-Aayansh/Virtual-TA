@@ -55,10 +55,10 @@ def extract_text_from_base64(img_b64: str) -> str | None:
         return ""
 
 
-def create_llm_prompt(query: str, topic_context: str, course_context: str, base64_image: Optional[str] = None) -> str:
+async def create_llm_prompt(query: str, topic_context: str, course_context: str, base64_image: Optional[str] = None) -> str:
     image_section = ""
     if base64_image:
-        base64_image_text = extract_text_from_base64(base64_image)
+        base64_image_text = await asyncio.to_thread(extract_text_from_base64, base64_image)
         if base64_image_text.strip():
             image_section = f"\n\nThe student also provided an image with the following text:\n{base64_image_text}"
         elif base64_image_text == "":
