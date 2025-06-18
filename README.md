@@ -159,6 +159,7 @@ Deploying your application on AWS EC2 provides full control over the server envi
 
 7. **Run the Application**:
      - Create a service file at `/etc/systemd/system/virtual-ta.service`:
+   
        ```ini
         [Unit]
         Description=Gunicorn server for your FastAPI app
@@ -198,50 +199,5 @@ Deploying your application on AWS EC2 provides full control over the server envi
 8. **Access the Application**:
    - The application will be accessible at `http://<ec2-public-ip>:6969`.
 
-**Note**: For a production environment, consider setting up a domain name, SSL certificates, and a reverse proxy like Nginx for better security and performance.
-
 ---
-
-### Option 2: Vercel
-Vercel is primarily designed for frontend applications but can also host serverless backend APIs. However, due to the serverless nature, it may have limitations like cold starts and execution time limits, making AWS EC2 a more suitable choice for this application.
-
-#### Steps to Deploy on Vercel:
-1. **Prepare the Application**:
-   - Ensure your FastAPI application is compatible with serverless functions. Adjust any parts that rely on long-running processes or stateful connections.
-
-2. **Create a `vercel.json` File**:
-   - In the root of your project, create a `vercel.json` file:
-     ```json
-     {
-       "version": 2,
-       "builds": [
-         {
-           "src": "api/main.py",
-           "use": "@vercel/python"
-         }
-       ],
-       "routes": [
-         {
-           "src": "/(.*)",
-           "dest": "api/main.py"
-         }
-       ]
-     }
-     ```
-
-3. **Install Vercel CLI (Optional)**:
-   - For local development and testing, install the Vercel CLI:
-     ```bash
-     npm install -g vercel
-     ```
-
-4. **Deploy to Vercel**:
-   - Sign up for a [Vercel account](https://vercel.com/signup).
-   - Connect your GitHub repository to Vercel.
-   - Import the project and deploy it. Vercel will use the `vercel.json` file for configuration.
-
-5. **Access the Application**:
-   - Once deployed, Vercel will provide a URL (e.g., `https://your-app.vercel.app`) where your application is accessible.
-
-**Note**: Vercel’s serverless environment may not be ideal for all backend applications due to potential cold starts and execution limits. Consider this when choosing your deployment platform.
 
