@@ -1,3 +1,13 @@
+## 📑 Index
+
+- [⚙️ Prerequisites](#-prerequisites)
+- [🚀 Setup & Local Development](#-setup--local-development)
+  - [Option 1: Quick Start with Pre-processed Data](#option-1-quick-start-with-pre-processed-data)
+  - [Option 2: Complete Setup from Scratch](#option-2-complete-setup-from-scratch)
+- [🚀 Cloud Deployment (AWS)](#-cloud-deployment-aws)
+
+---
+
 ## ⚙️ Prerequisites
 
 ### 1. Clone the Repository
@@ -30,6 +40,13 @@ venv\\Scripts\\activate
 ### 4. Install Required Package Dependencies
 ```bash
 pip install -r requirements.txt
+```
+
+### 5. Configure Environment Variables
+Add your API keys in `.env` file:
+```dotenv
+AIPROXY_API_KEY=your_aiproxy_api_key
+TOGETHER_AI_API_KEY=your_together_api_key
 ```
 
 ---
