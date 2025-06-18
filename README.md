@@ -8,6 +8,34 @@
 
 ---
 
+## 📁 Project Directory Structure
+
+Virtual-TA
+├── api/                            
+│   ├── core.py                     
+│   ├── course.py                   
+│   ├── discourse.py                
+│   ├── main.py                     
+│   └── utils.py                    
+├── data/                           
+│   ├── course_index.faiss          
+│   ├── course_metadata.json        
+│   ├── discourse_index.faiss       
+│   └── discourse_metadata.json     
+├── scripts/                        
+│   ├── 1_topics_fetcher.py         
+│   ├── 2_topics_cleaner.py         
+│   ├── 3_topics_merger.py          
+│   ├── 4_topics_answer.py          
+│   ├── 5_content_merger.py         
+│   ├── 6_topics_embedding.py       
+│   └── 7_content_embedding.py      
+├── README.md                       
+├── requirements.txt                
+├── LICENSE                         
+
+---
+
 ## ⚙️ Prerequisites
 
 ### 1. Clone the Repository
