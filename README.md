@@ -73,12 +73,12 @@ python 3_topics_merger.py
 
 - Fetch the question and replies of the topics
 ```bash
-python 4_topics_anser.py
+python 4_topics_answer.py
 ```
 
 - Clone the course content
 ```bash
-git clone https://github.com/sanand0/tools-in-data-science-public raw-data/cloned
+git clone https://github.com/sanand0/tools-in-data-science-public.git raw-data/cloned
 ```
 
 - Merge the course content
@@ -196,7 +196,7 @@ Deploying your application on AWS EC2 provides full control over the server envi
        ```
 
 8. **Access the Application**:
-   - The application will be accessible at `http://<ec2-public-ip>:6969`.
+   - The application will be accessible at `http://<ec2-public-ip>:8000`.
 
 ---
 
