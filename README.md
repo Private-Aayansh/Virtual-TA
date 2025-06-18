@@ -107,8 +107,7 @@ uvicorn main:app --reload --host 0.0.0.0 --port 6969
 ```
 
 
-## **🚀 Cloud Deployment**
-## Option 1: AWS EC2 (Recommended)
+## **🚀 Cloud Deployment (AWS)**
 Deploying your application on AWS EC2 provides full control over the server environment and is ideal for backend applications like your RAG App.
 
 1. **Launch an EC2 Instance**:
