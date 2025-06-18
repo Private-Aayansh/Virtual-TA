@@ -111,7 +111,6 @@ uvicorn main:app --reload --host 0.0.0.0 --port 6969
 ## Option 1: AWS EC2 (Recommended)
 Deploying your application on AWS EC2 provides full control over the server environment and is ideal for backend applications like your RAG App.
 
-#### Steps to Deploy on AWS EC2:
 1. **Launch an EC2 Instance**:
     - Ubuntu 22.04 LTS, t3.micro (or bigger if you use larger embeddings)
     - Open ports 22 (SSH) and 6969 (your API)
@@ -119,7 +118,7 @@ Deploying your application on AWS EC2 provides full control over the server envi
 2. **SSH into the Instance**:
    - Use your key pair to SSH into the instance:
      ```bash
-     ssh -i /path/to/key.pem ubuntu@ec2-xx-xx-xx-xx.compute-1.amazonaws.com
+     ssh -i /path/to/key.pem ubuntu@YOUR_EC2_PUBLIC_IP
      ```
 
 3. **Install Dependencies**:
@@ -159,26 +158,36 @@ Deploying your application on AWS EC2 provides full control over the server envi
      ```
 
 7. **Run the Application**:
-   - For testing, run the application directly:
-     ```bash
-     cd api
-     uvicorn main:app --host 0.0.0.0 --port 6969
-     ```
    - For production, use a process manager like `systemd`:
      - Create a service file at `/etc/systemd/system/virtual-ta.service`:
        ```ini
-       [Unit]
-       Description=Virtual TA Service
-       After=network.target
-
-       [Service]
-       User=ubuntu
-       WorkingDirectory=/home/ubuntu/Virtual-TA/api
-       ExecStart=/home/ubuntu/Virtual-TA/venv/bin/uvicorn main:app --host 0.0.0.0 --port 6969
-       Restart=always
-
-       [Install]
-       WantedBy=multi-user.target
+        [Unit]
+        Description=Gunicorn server for your FastAPI app
+        After=network.target
+        
+        [Service]
+        User=ubuntu
+        Group=ubuntu
+        WorkingDirectory=/home/ubuntu/Virtual-TA/api
+        Environment="PATH=/home/ubuntu/Virtual-TA/venv/bin"
+        Environment="PYTHONPATH=/home/ubuntu/Virtual-TA/api"
+        # force uvloop + h11 via env vars for UvicornWorker
+        Environment="UVICORN_LOOP=uvloop"
+        Environment="UVICORN_HTTP=httph11"
+        # 2 workers (one per vCPU), 16 threads each
+        ExecStart=/home/ubuntu/Virtual-TA/venv/bin/gunicorn \
+          main:app \
+          -k uvicorn.workers.UvicornH11Worker \
+          --workers 2 \
+          --threads 16 \
+          --bind 0.0.0.0:8000
+        
+        Restart=always
+        RestartSec=3
+        TimeoutStopSec=10
+        
+        [Install]
+        WantedBy=multi-user.target
        ```
      - Reload systemd and start the service:
        ```bash
